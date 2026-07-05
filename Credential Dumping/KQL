@@ -1,0 +1,15 @@
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where ProcessCommandLine has_any (
+    "sekurlsa",
+    "lsass",
+    "procdump",
+    "comsvcs.dll",
+    "mimikatz"
+)
+| project
+    Timestamp,
+    DeviceName,
+    FileName,
+    ProcessCommandLine,
+    AccountName

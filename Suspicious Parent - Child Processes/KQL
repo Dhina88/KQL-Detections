@@ -1,0 +1,25 @@
+DeviceProcessEvents
+| where Timestamp > ago(14d)
+| where InitiatingProcessFileName =~ "winword.exe"
+| where FileName in~ (
+"powershell.exe",
+"cmd.exe",
+"wscript.exe",
+"mshta.exe"
+)
+| project
+Timestamp,
+DeviceName,
+InitiatingProcessFileName,
+FileName,
+ProcessCommandLine
+
+Process Tree: Very common phishing chain.
+
+Word
+↓
+Macro
+↓
+PowerShell
+↓
+Malware

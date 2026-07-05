@@ -1,0 +1,10 @@
+let ThresholdMB = 500;
+CommonSecurityLog
+| where TimeGenerated > ago(1d)
+| where DeviceAction =~ "allowed"
+| summarize TotalSentMB = sum(SentBytes) / 1024.0 / 1024.0,
+            TotalReceivedMB = sum(ReceivedBytes) / 1024.0 / 1024.0,
+            ConnectionCount = count()
+          by SourceIP, DestinationIP, DestinationHostName
+| where TotalSentMB > ThresholdMB
+| order by TotalSentMB desc

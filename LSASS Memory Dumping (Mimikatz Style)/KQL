@@ -1,0 +1,9 @@
+DeviceEvents
+| where Timestamp > ago(7d)
+| where ActionType == "OpenProcessApiCall"
+| extend TargetProcess = tostring(parse_json(AdditionalFields).TargetProcessFileName)
+| where TargetProcess =~ "lsass.exe"
+| where InitiatingProcessFileName !in~ ("MsMpEng.exe", "wmiprvse.exe", "svchost.exe") // trim known-good AV/OS callers
+| project Timestamp, DeviceName, InitiatingProcessFileName, InitiatingProcessAccountName,
+          InitiatingProcessCommandLine, InitiatingProcessFolderPath, TargetProcess
+| order by Timestamp desc

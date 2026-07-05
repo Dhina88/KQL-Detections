@@ -1,0 +1,11 @@
+When A critical security data pipeline disconnects or breaks, blinding the SOC to incoming attacks. Big tech hiring managers love to see cost/health operational queries.
+
+// Track data ingestion volume anomalies across different log types over the past week
+_SentinelHealth
+| where TimeGenerated > ago(7d)
+| where SentinelResourceType == "Analytics Rule"
+| extend ExtendedProps = todynamic(ExtendedProperties)
+| extend EventCount = toint(ExtendedProps.QueryResultAmount)
+| summarize TotalRuns = count(), ZeroResultRuns = countif(EventCount == 0) by SentinelResourceName
+| extend FailureRatePercentage = (todouble(ZeroResultRuns) / todouble(TotalRuns)) * 100
+| order by FailureRatePercentage desc

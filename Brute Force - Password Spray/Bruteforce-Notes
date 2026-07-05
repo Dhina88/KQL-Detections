@@ -1,0 +1,4 @@
+Attackers rarely try 1,000 passwords against 1 account anymore (that trips lockout policies fast). Password spraying flips it: try 1-2 common passwords (Summer2026!, Company123) against hundreds of accounts. That's why this query groups by source IP over a time window and counts distinct accounts targeted, not just raw failure count — a spray shows up as one IP hitting many usernames, while a classic brute force shows up as one IP hammering one username.
+
+Tuning notes: 
+Watch for shared NAT/VPN exit IPs from your own company (a whole office behind one public IP will look like "many failed logons from one IP" if there's a bad password policy rollout). Also exclude known scanning/pentest IP ranges if you have authorized red team activity.

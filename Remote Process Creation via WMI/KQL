@@ -1,0 +1,8 @@
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where (FileName in~ ("psexec.exe", "psexesvc.exe", "paexec.exe"))
+   or (FileName =~ "wmic.exe" and ProcessCommandLine has "process call create")
+   or (FileName =~ "sc.exe" and ProcessCommandLine has "binPath" and ProcessCommandLine has @"\\")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine,
+          InitiatingProcessFileName, InitiatingProcessAccountName
+| order by Timestamp desc

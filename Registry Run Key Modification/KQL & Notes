@@ -1,0 +1,9 @@
+Scenario: Malicious software alters Windows startup folders or registry keys to ensure it boots back up even if the computer restarts.
+
+// Detect modifications to Windows Autorun/Run registry paths for persistence
+DeviceRegistryEvents
+| where Timestamp > ago(5d)
+| where ActionType == "RegistryValueSet"
+| where RegistryKey has @"Microsoft\Windows\CurrentVersion\Run" or RegistryKey has @"Microsoft\Windows\CurrentVersion\RunOnce"
+| where RegistryValueData != ""
+| project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessCommandLine

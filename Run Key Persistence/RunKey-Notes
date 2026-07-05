@@ -1,0 +1,11 @@
+Malware that only runs once is useless if the box reboots — attackers need persistence. The two most common (and cheapest) ways: (1) add a value under the Run registry key so Windows launches their payload every time the user logs in, or (2) create a scheduled task (schtasks /create /sc onlogon /tn "UpdaterSvc" /tr "C:\Users\Public\update.exe") disguised with an innocuous-sounding name. Ransomware crews and commodity malware (like most info-stealers) use this constantly because it's simple and reliable, and it survives reboots without needing kernel-level tricks.
+
+Process: 
+
+HKCU
+↓
+Run
+↓
+malware.exe
+↓
+Runs every reboot

@@ -1,0 +1,3 @@
+Scenario: An attacker tries to bypass basic string filters by encoding their malicious script payload into a Base64 string (-encodedcommand).
+
+Attacker gets initial access via a phishing email with a malicious link. The dropped payload runs powershell.exe -nop -w hidden -enc <base64> to download a second-stage implant without writing a script file to disk (this evades signature-based AV, since there's no file to scan; the payload lives only in memory/command line). This is one of the single most common patterns in real intrusions (Emotet, IcedID, Cobalt Strike loaders all do this).

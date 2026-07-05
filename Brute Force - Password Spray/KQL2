@@ -1,0 +1,9 @@
+Azure AD sign-in version (great for cloud identity attacks):
+
+kqlSigninLogs
+| where TimeGenerated > ago(1d)
+| where ResultType != "0" // non-zero = failed sign-in
+| summarize FailedCount = count(), TargetAccounts = make_set(UserPrincipalName)
+          by IPAddress, bin(TimeGenerated, 10m)
+| where FailedCount >= 10
+| order by FailedCount desc

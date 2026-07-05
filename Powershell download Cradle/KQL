@@ -1,0 +1,18 @@
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName =~ "powershell.exe"
+| where ProcessCommandLine has_any (
+    "Invoke-WebRequest",
+    "iwr",
+    "DownloadString",
+    "Net.WebClient",
+    "wget",
+    "curl"
+)
+| project
+    Timestamp,
+    DeviceName,
+    InitiatingProcessFileName,
+    ProcessCommandLine,
+    AccountName
+| order by Timestamp desc

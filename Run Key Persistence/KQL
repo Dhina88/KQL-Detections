@@ -1,0 +1,19 @@
+let RegPersistence =
+    DeviceRegistryEvents
+    | where Timestamp > ago(7d)
+    | where ActionType == "RegistryValueSet"
+    | where RegistryKey has_any (@"\Software\Microsoft\Windows\CurrentVersion\Run",
+                                  @"\Software\Microsoft\Windows\CurrentVersion\RunOnce")
+    | project Timestamp, DeviceName, AccountName = InitiatingProcessAccountName,
+              Detail = strcat(RegistryValueName, " -> ", RegistryValueData),
+              InitiatingProcessFileName, InitiatingProcessCommandLine;
+let TaskPersistence =
+    DeviceProcessEvents
+    | where Timestamp > ago(7d)
+    | where FileName =~ "schtasks.exe" and ProcessCommandLine has "/create"
+    | project Timestamp, DeviceName, AccountName,
+              Detail = ProcessCommandLine,
+              InitiatingProcessFileName, InitiatingProcessCommandLine;
+RegPersistence
+| union TaskPersistence
+| order by Timestamp desc

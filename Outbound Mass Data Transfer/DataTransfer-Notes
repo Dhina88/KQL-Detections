@@ -1,0 +1,3 @@
+After stealing data (finance records, source code, customer databases), an attacker needs to get it out. This shows up as one internal host suddenly pushing hundreds of MB/GB outbound to a destination it's never talked to before — often a cloud storage service (Mega, Dropbox, a raw IP with no reverse DNS) rather than your normal SaaS traffic. This is why firewall/proxy logs matter so much: endpoint logs (DeviceNetworkEvents) tell you that a connection happened, but only network appliance logs typically carry byte counts, which is what makes exfil detection possible.
+
+A compromised machine suddenly uploads gigabytes of compressed operational data to an external, unclassified IP address.

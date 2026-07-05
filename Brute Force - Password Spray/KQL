@@ -1,0 +1,8 @@
+let Threshold = 10;
+DeviceLogonEvents
+| where Timestamp > ago(1d)
+| where ActionType == "LogonFailed"
+| summarize FailedCount = count(), Accounts = make_set(AccountName)
+          by RemoteIP, DeviceName, bin(Timestamp, 10m)
+| where FailedCount >= Threshold
+| order by FailedCount desc

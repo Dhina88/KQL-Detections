@@ -1,0 +1,15 @@
+Purpose: Attackers download malware directly into memory.
+
+Attackers rarely download malware using Chrome.
+They usually use PowerShell.
+
+Example:
+
+powershell.exe
+↓
+Invoke-WebRequest
+↓
+Download
+↓
+Execute
+
