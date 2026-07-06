@@ -1,0 +1,35 @@
+let lookback = 1h;
+let suspiciousParents = dynamic(["winword.exe", "excel.exe", "outlook.exe", "powerpnt.exe", "mshta.exe", "wscript.exe", "cscript.exe"]);
+let encodingIndicators = dynamic(["-enc", "-encodedcommand", "frombase64string", "-e ", "-ec "]);
+let downloadCradleIndicators = dynamic(["downloadstring", "downloadfile", "invoke-webrequest", "iwr ", "invoke-expression", "iex ", "net.webclient", "bitsadmin", "certutil -urlcache", "curl -o", "wget "]);
+let evasionIndicators = dynamic(["-windowstyle hidden", "-w hidden", "-noprofile", "-nop ", "-executionpolicy bypass", "-exec bypass", "amsiutils", "disablerealtimemonitoring", "set-mppreference"]);
+let lolbins = dynamic(["regsvr32.exe", "rundll32.exe", "mshta.exe", "certutil.exe", "bitsadmin.exe", "installutil.exe", "msbuild.exe", "cmstp.exe"]);
+
+DeviceProcessEvents
+    | where TimeGenerated >= ago(lookback)
+        | where FileName in ~("powershell.exe", "pwsh.exe", "cmd.exe") or FileName has_any(lolbins)
+            | extend CommandLineLower = tolower(ProcessCommandLine)
+                | extend IsEncoded = CommandLineLower has_any(encodingIndicators)
+                    | extend IsDownloadCradle = CommandLineLower has_any(downloadCradleIndicators)
+                        | extend IsEvasion = CommandLineLower has_any(evasionIndicators)
+                            | extend IsSuspiciousParent = InitiatingProcessFileName in ~(suspiciousParents)
+                                | extend IsLolbin = FileName has_any(lolbins)
+                                    | extend SuspicionScore = toint(IsEncoded) + toint(IsDownloadCradle) + toint(IsEvasion) + (toint(IsSuspiciousParent) * 2) + toint(IsLolbin)
+                                        | where SuspicionScore >= 2
+                                            | project
+TimeGenerated,
+    DeviceName,
+    AccountName,
+    FileName,
+    ProcessCommandLine,
+    InitiatingProcessFileName,
+    InitiatingProcessCommandLine,
+    InitiatingProcessParentFileName,
+    IsEncoded,
+    IsDownloadCradle,
+    IsEvasion,
+    IsSuspiciousParent,
+    IsLolbin,
+    SuspicionScore,
+    ReportId
+    | order by SuspicionScore desc, TimeGenerated desc

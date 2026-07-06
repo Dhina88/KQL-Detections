@@ -1,0 +1,6 @@
+Purpose: 
+This rule scans process execution logs to catch command-line tricks attackers commonly use, like hidden PowerShell commands, disabled security tools, or programs downloading files from the internet. It's meant to catch early-stage attacks before they do real damage.
+
+How to use it: Paste this query into Microsoft Sentinel's log search (or Defender's "Advanced Hunting") and run it — it automatically checks the last hour of activity by default. You can save it as a scheduled rule so it runs continuously and alerts you instead of you running it manually each time.
+
+Expected output: You'll get a table listing suspicious command executions, showing which device and user ran them, the actual command typed, and a "SuspicionScore" (higher = more suspicious). Most results will need a human to review them — some may be real attacks, others may just be IT scripts or normal admin work that happens to look similar.
